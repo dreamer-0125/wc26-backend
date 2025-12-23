@@ -46,6 +46,21 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   }, [router.isReady, settings, fetchProfile]);
 
+  // Add timeout fallback to prevent infinite loading
+  useEffect(() => {
+    if (!settings && mounted) {
+      const timeout = setTimeout(() => {
+        // If settings haven't loaded after 10 seconds, set a default empty object
+        const currentSettings = useDashboardStore.getState().settings;
+        if (!currentSettings) {
+          useDashboardStore.setState({ settings: {}, extensions: null });
+        }
+      }, 10000); // 10 second timeout
+
+      return () => clearTimeout(timeout);
+    }
+  }, [settings, mounted]);
+
   useEffect(() => {
     const handleRouteChange = (url) => {
       if (process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_STATUS === "true") {

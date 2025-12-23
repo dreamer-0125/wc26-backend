@@ -27,7 +27,7 @@ const FooterSection: React.FC = () => {
               href="#"
               aria-label="Brand"
             >
-              Next Frontier Crypto Exchange
+              2026 FIFA WC Crypto Exchange
               {/* {siteName} */}
             </Link>
             <p className="mt-3 text-xs sm:text-sm text-gray-600 dark:text-neutral-400">

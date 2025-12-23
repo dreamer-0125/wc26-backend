@@ -353,6 +353,7 @@ export const useDashboardStore = create<DashboardStore>()(
       }, 5),
 
       fetchSettings: async () => {
+        try {
         const { data, error } = await $fetch({
           url: "/api/settings",
           silent: true,
@@ -369,6 +370,20 @@ export const useDashboardStore = create<DashboardStore>()(
 
           // Initialize menu after settings are fetched
           get().initializeMenu();
+          } else {
+            // Set default empty settings if API call fails
+            set((state) => {
+              state.settings = {};
+              state.extensions = null;
+            });
+          }
+        } catch (error) {
+          // Set default empty settings if API call throws an error
+          console.error("Error fetching settings:", error);
+          set((state) => {
+            state.settings = {};
+            state.extensions = null;
+          });
         }
       },
 

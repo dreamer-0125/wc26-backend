@@ -27,7 +27,7 @@ const TopNavbar = ({ trading, transparent }) => {
 
   return (
     <nav
-      className={`relative z-11 ${
+      className={`relative z-50 ${
         !transparent &&
         "border-b border-muted-200 bg-white dark:border-muted-900 dark:bg-muted-900"
       }`}

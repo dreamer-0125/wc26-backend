@@ -31,11 +31,24 @@ const HeroSection = () => {
   }, [profile]);
 
   return (
-    <section className="w-full dark:bg-black bg-white dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex flex-col md:flex-row items-center justify-center md:h-auto relative">
+    <section className="w-full dark:bg-black bg-white dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex flex-col md:flex-row items-center justify-center md:h-auto relative overflow-hidden">
+      {/* Football Stadium Background Image */}
+      <div className="absolute inset-0 w-full h-full z-0">
+        <img
+          src="img/home/background3.jpg"
+          alt="Football stadium background"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Overlay gradient for better text readability and visual appeal */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 dark:from-black/80 dark:via-black/60 dark:to-black/95"></div>
+        {/* Additional subtle overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30"></div>
+      </div>
+      
       {/* Radial gradient for the container to give a faded look */}
-      <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
-      {/* Hero */}
-      <div className="max-w-7xl relative pt-12 lg:pt-0 px-4 sm:px-6 lg:px-8 mx-auto">
+      <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black/20 bg-white/20 [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black)] z-10"></div>        
+        {/* Hero */}
+      <div className="max-w-7xl relative pt-12 lg:pt-0 px-4 sm:px-6 lg:px-8 mx-auto z-20">
         {/* Grid */}
         <div className="grid lg:grid-cols-2 gap-12">
           <div className="text-center md:text-left flex flex-col justify-center">
@@ -57,25 +70,25 @@ const HeroSection = () => {
               {/* {t("on")} {siteName} */}
             {/* </motion.h1> */}
             <motion.h1
-              className="text-6xl md:text-8xl lg:text-10xl font-bold text-muted-800 dark:text-muted-200"
+              className="text-6xl md:text-8xl lg:text-10xl font-bold text-white dark:text-white drop-shadow-2xl"
               initial={{ opacity: 0, y: -50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1 }}
             >
-              {t("Driving Financial Inclusion through the Transformative Power of Crypto")}{" "}
+              {t("2026 FIFA World Cup Crypto Betting")}{" "}
             </motion.h1>
             <motion.h1
-              className="text-4xl md:text-6xl lg:text-8xl text-muted-800 dark:text-muted-200 items-center"
+              className="text-4xl md:text-6xl lg:text-8xl text-white dark:text-white items-center drop-shadow-xl"
               initial={{ opacity: 0, y: -50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1 }}
             >
-              <span className="bg-linear-to-r from-indigo-500 to-indigo-500 bg-clip-text text-transparent items-center">
-                {t("Your choice, your power!")}
+              <span className="bg-linear-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent items-center drop-shadow-lg">
+                {t("Who will win? Believe your Choice!")}
               </span>{" "}
             </motion.h1>
-            {/* <motion.p
-              className="mt-4 text-lg md:text-xl text-muted-600 dark:text-muted-400"
+            <motion.p
+              className="mt-4 text-lg md:text-xl text-white/90 dark:text-white/90 drop-shadow-lg"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5 }}
@@ -83,7 +96,7 @@ const HeroSection = () => {
               {t(
                 "We provide the latest information on the best cryptocurrencies to invest in."
               )}
-            </motion.p> */}
+            </motion.p>
             {isLoggedIn && pnl ? (
               <motion.div
                 className="flex flex-col items-center md:items-start mt-5 space-y-2"
@@ -91,7 +104,7 @@ const HeroSection = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.5 }}
               >
-                <h2 className="text-md font-bold text-muted-800 dark:text-muted-200">
+                <h2 className="text-md font-bold text-white dark:text-white drop-shadow-lg">
                   {t("Your Estimated Balance")}
                 </h2>
                 <div className="flex items-center space-x-4">
