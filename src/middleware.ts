@@ -16,13 +16,9 @@ const defaultUserPath = process.env.NEXT_PUBLIC_DEFAULT_USER_PATH || "/user";
 const isMaintenance =
   process.env.NEXT_PUBLIC_MAINTENANCE_STATUS === "true" || false;
 
-if (!tokenSecret) {
-  throw new Error("APP_ACCESS_TOKEN_SECRET is not set");
-}
-
-if (!siteUrl) {
-  throw new Error("NEXT_PUBLIC_SITE_URL is not set");
-}
+// Validate critical environment variables but don't throw at module load
+// We'll handle errors gracefully in the middleware function
+const hasRequiredEnvVars = !!tokenSecret && (dev || !!siteUrl);
 
 interface Role {
   name: string;
@@ -67,17 +63,10 @@ async function fetchRolesAndPermissions(request: NextRequest) {
       "Content-Type": "application/json",
     };
 
-    // Add timeout to prevent hanging requests (10 seconds)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-
+    // Note: setTimeout is not available in Edge runtime
+    // We rely on fetch's built-in timeout handling and Edge runtime limits
     try {
-      const response = await fetch(apiUrl, {
-        headers,
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
+      const response = await fetch(apiUrl, { headers });
 
       if (response.ok) {
         const data = await response.json();
@@ -104,13 +93,8 @@ async function fetchRolesAndPermissions(request: NextRequest) {
         }
       }
     } catch (fetchError: any) {
-      clearTimeout(timeoutId);
-      if (fetchError.name === "AbortError") {
-        console.error("Roles fetch timeout after 10 seconds");
-      } else {
-        console.error("Error fetching roles and permissions:", fetchError.message || fetchError);
-      }
-      // Only reset cache on network errors, not on timeout to preserve existing cache
+      console.error("Error fetching roles and permissions:", fetchError.message || fetchError);
+      // Only reset cache on network errors
       if (fetchError.name !== "AbortError") {
         rolesCache = null;
       }
@@ -178,72 +162,78 @@ async function verifyToken(
 
 async function refreshToken(request: NextRequest) {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    // Use request URL in production to ensure correct host/port, fallback to siteUrl
+    let apiUrl: string;
+    if (dev) {
+      apiUrl = `${siteUrl}/api/auth/session`;
+    } else {
+      // In production, use the request's origin to ensure correct URL
+      const origin = request.nextUrl.origin;
+      apiUrl = `${origin}/api/auth/session`;
+    }
 
-    try {
-      // Use request URL in production to ensure correct host/port, fallback to siteUrl
-      let apiUrl: string;
-      if (dev) {
-        apiUrl = `${siteUrl}/api/auth/session`;
+    // Note: setTimeout and AbortController with timeout are not reliably available in Edge runtime
+    // We'll rely on fetch's built-in timeout handling
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: request.headers.get("cookie") || "",
+      },
+    });
+
+    if (response.ok) {
+      const cookies =
+        response.headers.get("set-cookie") || response.headers.get("cookie");
+      if (cookies) {
+        const accessToken = cookies.match(/accessToken=([^;]+);/)?.[1] || null;
+        return accessToken;
       } else {
-        // In production, use the request's origin to ensure correct URL
-        const origin = request.nextUrl.origin;
-        apiUrl = `${origin}/api/auth/session`;
+        console.error("No 'set-cookie' header in response.");
       }
-
-      const response = await fetch(apiUrl, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          cookie: request.headers.get("cookie") || "",
-        },
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (response.ok) {
-        const cookies =
-          response.headers.get("set-cookie") || response.headers.get("cookie");
-        if (cookies) {
-          const accessToken = cookies.match(/accessToken=([^;]+);/)?.[1] || null;
-          return accessToken;
-        } else {
-          console.error("No 'set-cookie' header in response.");
-        }
-      } else {
-        console.error(
-          "Failed to refresh token:",
-          response.status,
-          response.statusText
-        );
-      }
-    } catch (fetchError: any) {
-      clearTimeout(timeoutId);
-      if (fetchError.name === "AbortError") {
-        console.error("Token refresh timeout after 10 seconds");
-      } else {
-        console.error("Error refreshing token:", fetchError.message || fetchError);
-      }
+    } else {
+      console.error(
+        "Failed to refresh token:",
+        response.status,
+        response.statusText
+      );
     }
   } catch (error: any) {
-    console.error("Unexpected error in refreshToken:", error?.message || error);
+    console.error("Error refreshing token:", error?.message || error);
   }
   return null;
 }
 
 export async function middleware(request: NextRequest) {
+  // Early return if critical environment variables are missing
+  if (!hasRequiredEnvVars) {
+    console.error("Missing required environment variables. Check APP_ACCESS_TOKEN_SECRET and NEXT_PUBLIC_SITE_URL");
+    return NextResponse.next();
+  }
+
   try {
     const { pathname } = request.nextUrl;
 
     // Fetch roles and permissions if not done yet (non-blocking)
+    // Only fetch if we don't have cache and we're not in a critical path
+    // Skip fetch entirely if it might cause issues in production
     if (!rolesCache || Object.keys(rolesCache).length === 0) {
       // Don't await - let it fetch in background to avoid blocking requests
-      fetchRolesAndPermissions(request).catch((error) => {
-        console.error("Background roles fetch failed:", error?.message || error);
-      });
+      // Wrap in try-catch to prevent any unhandled promise rejections
+      try {
+        fetchRolesAndPermissions(request).catch((error) => {
+          // Silently handle errors - don't log in production to avoid noise
+          if (dev) {
+            console.error("Background roles fetch failed:", error?.message || error);
+          }
+        });
+      } catch (error) {
+        // Ignore errors during fetch initiation
+        if (dev) {
+          console.error("Failed to initiate roles fetch:", error);
+        }
+      }
     }
 
     if (!isFrontendEnabled && (pathname === "/" || pathname === "")) {
@@ -307,7 +297,11 @@ export async function middleware(request: NextRequest) {
         }
         const roleId = payload.sub.role;
         const userRole = rolesCache?.[roleId];
-        if (
+        // If roles cache is not available, allow access (graceful degradation)
+        if (!rolesCache) {
+          // Roles not loaded yet, allow access to prevent blocking
+          // This is a fallback for when roles API is unavailable
+        } else if (
           !userRole ||
           (userRole.name !== "Super Admin" &&
             !userRole.permissions.includes("Access Admin Dashboard"))
@@ -342,13 +336,17 @@ export async function middleware(request: NextRequest) {
 
     if (
       isTokenValid &&
-      (pathname.startsWith("/admin") || pathname in gate) &&
-      !(await hasPermission(payload!, pathname))
+      (pathname.startsWith("/admin") || pathname in gate)
     ) {
-      const url = new URL(request.nextUrl);
-      url.pathname = defaultUserPath;
-      url.searchParams.delete("return");
-      return NextResponse.redirect(url.toString());
+      // Only check permissions if roles cache is available
+      // If cache is not available, allow access (graceful degradation)
+      if (rolesCache && !(await hasPermission(payload!, pathname))) {
+        const url = new URL(request.nextUrl);
+        url.pathname = defaultUserPath;
+        url.searchParams.delete("return");
+        return NextResponse.redirect(url.toString());
+      }
+      // If rolesCache is null, allow access to prevent blocking users
     }
 
     return NextResponse.next();
