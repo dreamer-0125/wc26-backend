@@ -1,0 +1,72 @@
+{
+  "footerNote": "Stay informed about cryptocurrency trends,",
+  "footerNoteLink": "/blog",
+  "footerNoteText": "read our blog",
+  "copyright": "© 2026 FIFA WC Crypto Exchange. All rights reserved.",
+  "sections": [
+    {
+      "title": "Company",
+      "links": [
+        {
+          "name": "About Us",
+          "url": "/about"
+        },
+        {
+          "name": "Contact",
+          "url": "/contact"
+        },
+        {
+          "name": "Careers",
+          "url": "/careers"
+        },
+        {
+          "name": "Blog",
+          "url": "/blog"
+        }
+      ]
+    },
+    {
+      "title": "Legal",
+      "links": [
+        {
+          "name": "Privacy Policy",
+          "url": "/privacy"
+        },
+        {
+          "name": "Terms of Service",
+          "url": "/terms"
+        },
+        {
+          "name": "Cookie Policy",
+          "url": "/cookies"
+        },
+        {
+          "name": "Disclaimer",
+          "url": "/disclaimer"
+        }
+      ]
+    },
+    {
+      "title": "Support",
+      "links": [
+        {
+          "name": "Help Center",
+          "url": "/help"
+        },
+        {
+          "name": "FAQ",
+          "url": "/faq"
+        },
+        {
+          "name": "API Documentation",
+          "url": "/api-docs"
+        },
+        {
+          "name": "Security",
+          "url": "/security"
+        }
+      ]
+    }
+  ]
+}
+
