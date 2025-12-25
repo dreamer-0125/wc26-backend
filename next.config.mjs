@@ -32,18 +32,22 @@ const nextConfig = async (phase, { defaultConfig }) => {
     reactStrictMode: true,
     poweredByHeader: false,
     async rewrites() {
+      const backendUrl = process.env.NODE_ENV === 'production' 
+        ? process.env.NEXT_PUBLIC_BACKEND_URL || `https://your-backend-domain.com`
+        : `http://localhost:${backendPort}`;
+        
       return [
         {
           source: "/api/:path*",
-          destination: `http://localhost:${backendPort}/api/:path*`, // Proxy to Backend
+          destination: `${backendUrl}/api/:path*`, // Proxy to Backend
         },
         {
           source: "/uploads/:path*",
-          destination: `http://localhost:${backendPort}/uploads/:path*`, // Proxy to Backend
+          destination: `${backendUrl}/uploads/:path*`, // Proxy to Backend
         },
         {
           source: "/themes/:path*",
-          destination: `http://localhost:${backendPort}/themes/:path*`, // Proxy to Backend
+          destination: `${backendUrl}/themes/:path*`, // Proxy to Backend
         },
       ];
     },
