@@ -313,6 +313,11 @@ export const useDashboardStore = create<DashboardStore>()(
           silent: true,
         });
 
+        // Log error for debugging (only in development)
+        if (error && process.env.NODE_ENV === "development") {
+          console.error("Profile fetch error:", error);
+        }
+
         if (!error && data) {
           const { profile, ...rest } = data;
           setProfile({
@@ -324,12 +329,12 @@ export const useDashboardStore = create<DashboardStore>()(
               : null,
           });
 
-          const walletProvider = rest.providerUsers.find(
+          const walletProvider = rest.providerUsers?.find(
             (provider) => provider.provider === "WALLET"
           );
 
           const hasAdminAccess = adminMenu.some((menuItem: IMenu) =>
-            checkPermission(menuItem.permission, data.role.permissions)
+            checkPermission(menuItem.permission, data.role?.permissions || [])
           );
 
           const newFilteredMenu = filterMenu(
@@ -344,10 +349,13 @@ export const useDashboardStore = create<DashboardStore>()(
 
           setFilteredMenu(newFilteredMenu);
         } else {
+          // Clear profile on error to ensure UI shows login/register buttons
+          setProfile(null);
           const newFilteredMenu = filterMenu(userMenu);
           setFilteredMenu(newFilteredMenu);
           set((state) => {
             state.isFetched = true;
+            state.isAdmin = false;
           });
         }
       }, 5),

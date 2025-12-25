@@ -11,11 +11,17 @@ import Button from "@/components/elements/base/button/Button";
 const AccountDropdownBase = () => {
   const { t } = useTranslation();
   const logout = useLogout();
-  const { profile } = useDashboardStore();
+  const { profile, isFetched } = useDashboardStore();
 
+  // Show loading state while fetching
+  if (!isFetched) {
+    return null;
+  }
+
+  // Show login/register buttons if profile is not loaded after fetch is complete
   if (!profile) {
     return (
-      <>
+      <div className="flex items-center gap-2">
         <Link href="/login">
           <Button color="primary" shape="rounded-sm" variant="outlined">
             <Icon
@@ -31,7 +37,7 @@ const AccountDropdownBase = () => {
             {t("Register")}
           </Button>
         </Link>
-      </>
+      </div>
     );
   }
 
