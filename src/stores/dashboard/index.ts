@@ -79,7 +79,7 @@ const readMode = () => {
 type DashboardStore = {
   profile: User | null;
   settings: any | null;
-  extensions: any | null;
+  extensions: any[];
   notifications: any[];
   announcements: any[];
   filteredMenu: any[];
@@ -157,7 +157,7 @@ export const useDashboardStore = create<DashboardStore>()(
     return {
       profile: null,
       settings: null,
-      extensions: null,
+      extensions: [],
       notifications: [],
       announcements: [],
       filteredMenu: initialFilteredMenu,
@@ -194,7 +194,7 @@ export const useDashboardStore = create<DashboardStore>()(
           settings,
           extensions,
         } = get();
-        if (!settings || !extensions) return []; // Ensure settings and extensions are available
+        if (!settings) return []; // Ensure settings are available
 
         return menu
           .filter((menuItem) => {
@@ -382,7 +382,7 @@ export const useDashboardStore = create<DashboardStore>()(
             // Set default empty settings if API call fails
             set((state) => {
               state.settings = {};
-              state.extensions = null;
+              state.extensions = [];
             });
           }
         } catch (error) {
@@ -390,7 +390,7 @@ export const useDashboardStore = create<DashboardStore>()(
           console.error("Error fetching settings:", error);
           set((state) => {
             state.settings = {};
-            state.extensions = null;
+            state.extensions = [];
           });
         }
       },
@@ -434,7 +434,7 @@ export const useDashboardStore = create<DashboardStore>()(
 
       hasExtension: (name) => {
         const { extensions } = get();
-        if (!extensions) return false;
+        if (!extensions || !Array.isArray(extensions)) return false;
         return extensions.includes(name);
       },
 

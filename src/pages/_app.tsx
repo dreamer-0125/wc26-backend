@@ -53,7 +53,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         // If settings haven't loaded after 10 seconds, set a default empty object
         const currentSettings = useDashboardStore.getState().settings;
         if (!currentSettings) {
-          useDashboardStore.setState({ settings: {}, extensions: null });
+          useDashboardStore.setState({ settings: {}, extensions: [] });
         }
       }, 10000); // 10 second timeout
 

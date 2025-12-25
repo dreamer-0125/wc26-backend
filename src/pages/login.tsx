@@ -45,7 +45,7 @@ export default function Login() {
   const { script, setVerificationCode, handleVerificationSubmit } =
     useLoginStore();
   const { fetchProfile, extensions } = useDashboardStore();
-  const hasWalletConnect = extensions.includes("wallet_connect");
+  const hasWalletConnect = extensions?.includes("wallet_connect") || false;
 
   const { token } = router.query as { token: string };
 
