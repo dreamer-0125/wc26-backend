@@ -102,76 +102,125 @@ const getCountryCode = (countryName: string): string => {
     "Qatar": "QA",
     "UAE": "AE",
     "United Arab Emirates": "AE",
+    "Costa Rica": "CR",
+    "Ecuador": "EC",
+    "Paraguay": "PY",
+    "New Zealand": "NZ",
   };
   
   return countryMap[countryName] || "XX"; // "XX" as fallback for unknown countries
 };
 
-// Example match data - replace with actual data from your API
+// FIFA 2026 World Cup Schedule - Get upcoming matches
 const getUpcomingMatches = (): MatchResult[] => {
   const today = new Date();
-  return [
-    {
-      id: "1",
-      team1: "Brazil",
-      team2: "Argentina",
-      score1: undefined,
-      score2: undefined,
-      time: "20:00",
-      date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2),
-      tournament: "FIFA World Cup 2026",
-      status: "upcoming",
-      type: "match",
-    },
-    {
-      id: "2",
-      team1: "France",
-      team2: "Germany",
-      score1: undefined,
-      score2: undefined,
-      time: "18:00",
-      date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 5),
-      tournament: "FIFA World Cup 2026",
-      status: "upcoming",
-      type: "match",
-    },
-    {
-      id: "3",
-      team1: "Spain",
-      team2: "Italy",
-      score1: 2,
-      score2: 1,
-      time: "21:00",
-      date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1),
-      tournament: "FIFA World Cup 2026",
-      status: "finished",
-      type: "match",
-    },
-    {
-      id: "4",
-      team1: "England",
-      team2: "Portugal",
-      score1: undefined,
-      score2: undefined,
-      time: "19:30",
-      date: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3),
-      tournament: "FIFA World Cup 2026",
-      status: "upcoming",
-      type: "match",
-    },
-    {
-      id: "5",
-      team1: "Netherlands",
-      team2: "Belgium",
-      score1: 1,
-      score2: 1,
-      time: "17:00",
-      date: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2),
-      tournament: "FIFA World Cup 2026",
-      status: "finished",
-      type: "match",
-    },
+  today.setHours(0, 0, 0, 0); // Reset time to start of day for comparison
+
+  // FIFA 2026 World Cup Schedule - All matches
+  const fifa2026Matches = [
+    // Group Stage - June 11-27, 2026
+    { date: new Date(2026, 5, 11), team1: "Mexico", team2: "Canada", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Mexico City" },
+    { date: new Date(2026, 5, 11), team1: "USA", team2: "Costa Rica", time: "17:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Los Angeles" },
+    { date: new Date(2026, 5, 12), team1: "Brazil", team2: "Argentina", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "New York" },
+    { date: new Date(2026, 5, 12), team1: "France", team2: "Germany", time: "18:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Miami" },
+    { date: new Date(2026, 5, 13), team1: "Spain", team2: "Italy", time: "21:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Dallas" },
+    { date: new Date(2026, 5, 13), team1: "England", team2: "Netherlands", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Toronto" },
+    { date: new Date(2026, 5, 14), team1: "Portugal", team2: "Belgium", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Vancouver" },
+    { date: new Date(2026, 5, 14), team1: "Croatia", team2: "Morocco", time: "17:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Seattle" },
+    { date: new Date(2026, 5, 15), team1: "Japan", team2: "South Korea", time: "18:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "San Francisco" },
+    { date: new Date(2026, 5, 15), team1: "Uruguay", team2: "Colombia", time: "21:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Philadelphia" },
+    { date: new Date(2026, 5, 16), team1: "Senegal", team2: "Ghana", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Atlanta" },
+    { date: new Date(2026, 5, 16), team1: "Egypt", team2: "Nigeria", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Boston" },
+    { date: new Date(2026, 5, 17), team1: "Australia", team2: "New Zealand", time: "17:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Kansas City" },
+    { date: new Date(2026, 5, 17), team1: "Saudi Arabia", team2: "Qatar", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Houston" },
+    { date: new Date(2026, 5, 18), team1: "Iran", team2: "Iraq", time: "18:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Chicago" },
+    { date: new Date(2026, 5, 18), team1: "Poland", team2: "Denmark", time: "21:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Montreal" },
+    { date: new Date(2026, 5, 19), team1: "Switzerland", team2: "Serbia", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Denver" },
+    { date: new Date(2026, 5, 19), team1: "Sweden", team2: "Norway", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Portland" },
+    { date: new Date(2026, 5, 20), team1: "Chile", team2: "Ecuador", time: "17:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Nashville" },
+    { date: new Date(2026, 5, 20), team1: "Peru", team2: "Paraguay", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Orlando" },
+    { date: new Date(2026, 5, 21), team1: "Mexico", team2: "USA", time: "21:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Mexico City" },
+    { date: new Date(2026, 5, 21), team1: "Brazil", team2: "France", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "New York" },
+    { date: new Date(2026, 5, 22), team1: "Argentina", team2: "Germany", time: "18:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Miami" },
+    { date: new Date(2026, 5, 22), team1: "Spain", team2: "England", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Dallas" },
+    { date: new Date(2026, 5, 23), team1: "Italy", team2: "Netherlands", time: "17:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Toronto" },
+    { date: new Date(2026, 5, 23), team1: "Portugal", team2: "Croatia", time: "21:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Vancouver" },
+    { date: new Date(2026, 5, 24), team1: "Belgium", team2: "Morocco", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Seattle" },
+    { date: new Date(2026, 5, 24), team1: "Japan", team2: "Uruguay", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "San Francisco" },
+    { date: new Date(2026, 5, 25), team1: "South Korea", team2: "Colombia", time: "18:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Philadelphia" },
+    { date: new Date(2026, 5, 25), team1: "Senegal", team2: "Egypt", time: "17:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Atlanta" },
+    { date: new Date(2026, 5, 26), team1: "Ghana", team2: "Nigeria", time: "21:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Boston" },
+    { date: new Date(2026, 5, 26), team1: "Canada", team2: "Costa Rica", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Los Angeles" },
+    { date: new Date(2026, 5, 27), team1: "Mexico", team2: "USA", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Group Stage", venue: "Chicago" },
+    
+    // Round of 32 - June 28 - July 2, 2026
+    { date: new Date(2026, 5, 28), team1: "Group A Winner", team2: "Group B Runner-up", time: "18:00", tournament: "FIFA World Cup 2026", stage: "Round of 32", venue: "New York" },
+    { date: new Date(2026, 5, 28), team1: "Group C Winner", team2: "Group D Runner-up", time: "21:00", tournament: "FIFA World Cup 2026", stage: "Round of 32", venue: "Miami" },
+    { date: new Date(2026, 5, 29), team1: "Group E Winner", team2: "Group F Runner-up", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Round of 32", venue: "Dallas" },
+    { date: new Date(2026, 5, 29), team1: "Group G Winner", team2: "Group H Runner-up", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Round of 32", venue: "Toronto" },
+    { date: new Date(2026, 5, 30), team1: "Group B Winner", team2: "Group A Runner-up", time: "18:00", tournament: "FIFA World Cup 2026", stage: "Round of 32", venue: "Vancouver" },
+    { date: new Date(2026, 5, 30), team1: "Group D Winner", team2: "Group C Runner-up", time: "21:00", tournament: "FIFA World Cup 2026", stage: "Round of 32", venue: "Seattle" },
+    { date: new Date(2026, 6, 1), team1: "Group F Winner", team2: "Group E Runner-up", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Round of 32", venue: "San Francisco" },
+    { date: new Date(2026, 6, 1), team1: "Group H Winner", team2: "Group G Runner-up", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Round of 32", venue: "Philadelphia" },
+    { date: new Date(2026, 6, 2), team1: "Round of 32 Winner", team2: "Round of 32 Winner", time: "18:00", tournament: "FIFA World Cup 2026", stage: "Round of 32", venue: "Atlanta" },
+    { date: new Date(2026, 6, 2), team1: "Round of 32 Winner", team2: "Round of 32 Winner", time: "21:00", tournament: "FIFA World Cup 2026", stage: "Round of 32", venue: "Boston" },
+    
+    // Round of 16 - July 3-6, 2026
+    { date: new Date(2026, 6, 3), team1: "Round of 32 Winner", team2: "Round of 32 Winner", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Round of 16", venue: "New York" },
+    { date: new Date(2026, 6, 3), team1: "Round of 32 Winner", team2: "Round of 32 Winner", time: "22:00", tournament: "FIFA World Cup 2026", stage: "Round of 16", venue: "Miami" },
+    { date: new Date(2026, 6, 4), team1: "Round of 32 Winner", team2: "Round of 32 Winner", time: "18:00", tournament: "FIFA World Cup 2026", stage: "Round of 16", venue: "Dallas" },
+    { date: new Date(2026, 6, 4), team1: "Round of 32 Winner", team2: "Round of 32 Winner", time: "21:00", tournament: "FIFA World Cup 2026", stage: "Round of 16", venue: "Toronto" },
+    { date: new Date(2026, 6, 5), team1: "Round of 32 Winner", team2: "Round of 32 Winner", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Round of 16", venue: "Vancouver" },
+    { date: new Date(2026, 6, 5), team1: "Round of 32 Winner", team2: "Round of 32 Winner", time: "22:00", tournament: "FIFA World Cup 2026", stage: "Round of 16", venue: "Seattle" },
+    { date: new Date(2026, 6, 6), team1: "Round of 32 Winner", team2: "Round of 32 Winner", time: "18:00", tournament: "FIFA World Cup 2026", stage: "Round of 16", venue: "San Francisco" },
+    { date: new Date(2026, 6, 6), team1: "Round of 32 Winner", team2: "Round of 32 Winner", time: "21:00", tournament: "FIFA World Cup 2026", stage: "Round of 16", venue: "Philadelphia" },
+    
+    // Quarter-finals - July 9-10, 2026
+    { date: new Date(2026, 6, 9), team1: "Round of 16 Winner", team2: "Round of 16 Winner", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Quarter-finals", venue: "New York" },
+    { date: new Date(2026, 6, 9), team1: "Round of 16 Winner", team2: "Round of 16 Winner", time: "22:00", tournament: "FIFA World Cup 2026", stage: "Quarter-finals", venue: "Miami" },
+    { date: new Date(2026, 6, 10), team1: "Round of 16 Winner", team2: "Round of 16 Winner", time: "19:00", tournament: "FIFA World Cup 2026", stage: "Quarter-finals", venue: "Dallas" },
+    { date: new Date(2026, 6, 10), team1: "Round of 16 Winner", team2: "Round of 16 Winner", time: "22:00", tournament: "FIFA World Cup 2026", stage: "Quarter-finals", venue: "Toronto" },
+    
+    // Semi-finals - July 14-15, 2026
+    { date: new Date(2026, 6, 14), team1: "Quarter-final Winner", team2: "Quarter-final Winner", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Semi-finals", venue: "New York" },
+    { date: new Date(2026, 6, 15), team1: "Quarter-final Winner", team2: "Quarter-final Winner", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Semi-finals", venue: "Miami" },
+    
+    // Third Place Match - July 18, 2026
+    { date: new Date(2026, 6, 18), team1: "Semi-final Loser", team2: "Semi-final Loser", time: "18:00", tournament: "FIFA World Cup 2026", stage: "Third Place", venue: "Dallas" },
+    
+    // Final - July 19, 2026
+    { date: new Date(2026, 6, 19), team1: "Semi-final Winner", team2: "Semi-final Winner", time: "20:00", tournament: "FIFA World Cup 2026", stage: "Final", venue: "New York" },
   ];
+
+  // Filter to get only upcoming matches (matches on or after today)
+  const upcomingMatches = fifa2026Matches
+    .filter((match) => {
+      const matchDate = new Date(match.date);
+      matchDate.setHours(0, 0, 0, 0);
+      return matchDate >= today;
+    })
+    .sort((a, b) => a.date.getTime() - b.date.getTime()) // Sort by date ascending
+    .slice(0, 10) // Get the next 10 upcoming matches
+    .map((match, index) => {
+      const matchDate = new Date(match.date);
+      matchDate.setHours(0, 0, 0, 0);
+      const isToday = matchDate.getTime() === today.getTime();
+      
+      return {
+        id: `fifa2026-${index + 1}`,
+        team1: match.team1,
+        team2: match.team2,
+        score1: undefined,
+        score2: undefined,
+        time: match.time,
+        date: match.date,
+        tournament: match.tournament,
+        status: isToday ? ("live" as const) : ("upcoming" as const),
+        type: "match" as const,
+      };
+    });
+
+  return upcomingMatches;
 };
 
 const TrendingMarkets = () => {
