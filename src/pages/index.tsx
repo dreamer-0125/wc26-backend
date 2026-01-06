@@ -9,6 +9,7 @@ import StatusSection from "@/components/pages/frontend/StatusSection";
 import CookieBanner from "@/components/pages/frontend/Cookie";
 import BannerSection from "@/components/pages/frontend/BannerSection";
 import MarketsSection from "@/components/pages/frontend/MarketsSection";
+import WhyChooseSection from "@/components/pages/frontend/WhyChooseSection";
 import { useDashboardStore } from "@/stores/dashboard";
 
 const Home = () => {
@@ -19,6 +20,7 @@ const Home = () => {
     <Layout horizontal>
       <HeroSection />
       <MarketsSection />
+      <WhyChooseSection />
       <StatusSection />
       <FeaturesSection />
       <BannerSection />
